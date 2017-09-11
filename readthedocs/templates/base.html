@@ -1,0 +1,145 @@
+{% load i18n %}
+{% load copyrighttags %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <!-- meta -->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="icon" type="image/png" href="{{ MEDIA_URL }}images/favicon.png">
+
+  <!-- title -->
+  <title>{% block title %}{% endblock %}{% block head_title %}{% endblock %} | {% block branding %}Read the Docs {% endblock %}</title>
+
+  <!-- css -->
+  <link rel="stylesheet" href="{{ MEDIA_URL }}css/core.css">
+  {% block extra_links %}{% endblock %}
+
+  <!-- jquery -->
+  <script type="text/javascript" src="{% static 'vendor/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'vendor/jquery-migrate.js' %}"></script>
+  <script type="text/javascript" src="{% static 'vendor/jquery-ui.js' %}"></script>
+  <script type="text/javascript">
+    require('jquery');
+  </script>
+
+  <script type="text/javascript" src="{{ MEDIA_URL }}javascript/instantsearch.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}javascript/base.js"></script>
+  <script type="text/javascript" src="{% static 'core/js/site.js' %}"></script>
+  <script type="text/javascript">
+    var site = require('core/site');
+    site.handle_notification_dismiss();
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+
+  <!-- typekit -->
+  <!-- Old typekit
+  <script type="text/javascript" src="//use.typekit.com/xgl8ypn.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+  -->
+
+  <script type="text/javascript" src="//use.typekit.net/haq4xtp.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+    {% block header-wrapper %}
+        {% include "core/header.html" %}
+    {% endblock %}
+
+    {% block subnav-bar %}{% endblock %}
+
+    {% block project_editing %}{% endblock %}
+
+
+    <!-- BEGIN content-->
+    <div id="content">
+      <div class="wrapper">
+
+        {% if messages %}
+          <ul class="notifications">
+            {% for message in messages %}
+              <li class="notification notification-{{ message.level }}" {% if message.pk %}data-dismiss-url="{% url 'message_mark_read' message.pk %}{% endif %}">
+                {{ message }}
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        {% block content-header %}
+        {% endblock %}
+
+        {% block content %}
+        {% endblock %}
+
+      </div>
+    </div>
+    <!-- END content-->
+
+    <!-- BEGIN footer-->
+    <div id="footer">
+      <div class="wrapper">
+
+        <hr>
+
+
+        {% block footer-content %}
+        <a href="https://github.com/rtfd/readthedocs.org">GitHub</a> | <a href="http://docs.readthedocs.io">{%  trans "Docs" %}</a>.
+
+        {% url "gold_detail" as gold_detail %}
+        {% blocktrans %}
+        Made by <a href="https://docs.readthedocs.io/en/latest/team.html">humans</a>. Funded by <a href="{{ gold_detail }}">readers like you</a>.
+        {% endblocktrans %}
+        </p>
+        {% endblock %}
+
+        {% get_current_language as current_lang %}
+        <form action="/i18n/setlang/" method="post">{% csrf_token %}
+          <input name="next" type="hidden" value="/" />
+            {% csrf_token %}
+            <select style="float: left; height: 33px;" name="language">
+              {% for lang in LANGUAGES %}
+                {% if lang.0 == current_lang %}
+                <option selected="selected" value="{{ lang.0 }}">{{ lang.0|language_name_local }} [{{ lang.1 }}]</option>
+                {% else %}
+                <option value="{{ lang.0 }}">{{ lang.0|language_name_local }} [{{ lang.1 }}]</option>
+                {% endif %}
+                }
+              {% endfor %}
+            </select>
+            <input style="float: left; height: 33px; margin: 0px;" type="submit" value="Change Language" name="submit" id="change-language-input">
+        </form>
+
+        <br>
+        <br>
+
+      </div>
+    </div>
+    <!-- END footer-->
+
+</body>
+
+<!-- BEGIN google analytics -->
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', '{{ GLOBAL_ANALYTICS_CODE }}']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+  {% block footerjs %}{% endblock %}
+
+</script>
+<!-- END google analytics -->
+
+</html>

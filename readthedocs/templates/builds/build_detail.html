@@ -1,0 +1,170 @@
+{% extends "projects/base_project.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ build.project.name }}{% endblock %}
+
+{% block extra_scripts %}
+  <script type="text/javascript" src="{% static 'vendor/knockout.js' %}"></script>
+  <script type="text/javascript" src="{% static 'builds/js/detail.js' %}"></script>
+  <script type="text/javascript">
+var detail_views = require('builds/detail');
+$(document).ready(function () {
+    var view = detail_views.BuildDetailView.init({id: '{{ build.pk }}'});
+});
+  </script>
+{% endblock %}
+
+{% block extra_links %}
+  <link rel="stylesheet" href="{% static 'builds/css/detail.css' %}" />
+{% endblock %}
+
+{% block project_editing %}
+  {% with builds_active="active" %}
+    {% include "core/project_bar.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+  <div class="build build-detail" id="build-detail">
+
+    <!-- Build meta data -->
+    <ul class="build-meta">
+      <div data-bind="visible: finished()">
+        <li>
+          {% trans "Completed" %}
+          <span>{{ build.date|date:"N j, Y. P" }}</span>
+        </li>
+
+        <li>
+          {% trans "Build took" %}
+          <span data-bind="text: length">
+            {{ build.length }}
+          </span>
+          {% trans "seconds" %}
+        </li>
+      </div>
+
+      {% if build.builder and request.user.is_staff %}
+        <li>
+          {% trans "Built on" %}
+          {{ build.builder }}
+        </li>
+      {% endif %}
+    </ul>
+
+    <div class="build-id">
+      {% blocktrans with build_id=build.pk %}
+        Build #{{ build_id }}
+      {% endblocktrans %}
+    </div>
+
+    <div class="build-version">
+      <span class="build-version-slug">
+        {{ build.version.slug }}
+      </span>
+      <span class="build-commit"
+            data-bind="visible: commit">
+        (<span data-bind="text: commit">{{ build.commit }}</span>)
+      </span>
+    </div>
+
+    <div class="build-state">
+      <span>
+        <span data-bind="visible: !finished(), text: state_display"
+              style="display: none;">
+          {{ build.get_state_display }}
+        </span>
+        <img src="{% static 'core/img/loader.gif' %}"
+            data-bind="visible: !finished()"
+            style="display: none;" />
+      </span>
+      <span class="build-state-successful"
+            data-bind="visible: finished() && success()"
+            style="display: none;">
+        {% trans "Build completed" %}
+      </span>
+      <span class="build-state-failed"
+            data-bind="visible: finished() && !success()"
+            style="display: none;">
+        {% trans "Build failed" %}
+      </span>
+    </div>
+
+    {% if build.output %}
+      {# If we have build output, this is an old build #}
+      <p>
+        <button data-bind="visible: !legacy_output(), click: show_legacy_output">
+          {% trans "Show full build output" %}
+        </button>
+      </p>
+
+      <div data-bind="visible: legacy_output"
+           style="display: none;">
+        <h3>{% trans "Build Output" %}</h3>
+        <pre class="build-output"><span id="build-output">{{ build.output }}</span></pre>
+
+        {% if build.setup %}
+          <h3>{% trans "Setup Output" %}</h3>
+          <pre class="build-output"><span id="build-setup">{{ build.setup }}</span></pre>
+        {% endif %}
+
+        {% if build.setup_error %}
+          <h3>{% trans "Environment Standard Error" %}</h3>
+          <pre class="build-error"><span id="build-setup_error">{{ build.setup_error }}</span></pre>
+        {% endif %}
+      </div>
+
+      {% if build.error %}
+        <h3>{% trans "Build Errors" %}</h3>
+        <pre class="build-error"><span id="build-error">{{ build.error }}</span></pre>
+      {% endif %}
+
+    {% else %}
+      {# Show new command output if lacking build.output #}
+
+      <div class="build-error"
+           data-bind="visible: error"
+           style="display: none;">
+        <h3>{% trans "Error" %}</h3>
+        <p class="build-error"
+           data-bind="text: error">
+          {{ build.error }}
+        </p>
+      </div>
+
+      <div id="build-commands"
+           class="build-command-list"
+           data-bind="visible: commands, foreach: display_commands"
+           style="display: none;">
+        <div class="build-command"
+             data-bind="css: command_status">
+          <div class="build-command-run" data-bind="click: toggleCommand">
+            <span data-bind="text: command"></span>
+          </div>
+          <div class="build-command-return"
+               data-bind="visible: is_showing">
+            <div class="build-command-output">
+              <span data-bind="text: output"></span>
+            </div>
+
+            <div class="build-command-meta">
+              <span class="build-command-time">
+                {% trans "Command time:" %}
+                <span data-bind="text: run_time">0</span>s
+              </span>
+
+              <span class="build-command-exit-code">
+                {% trans "Return" %}:
+                <span data-bind="text: exit_code"></span>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+{% endblock %}
