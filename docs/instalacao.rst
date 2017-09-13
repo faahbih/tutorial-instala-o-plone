@@ -113,3 +113,11 @@ Para subir o portal digite os seguintes comandos
 
 
 Acesse: localhost:8080/
+
+
+Para parar o serviço
+::
+
+  ./bin/instance stop
+
+
