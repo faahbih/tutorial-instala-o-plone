@@ -1,7 +1,7 @@
 Tutorial Instalação Plone com Portal Padrão
 ===========================================
 
-* Este tutorial teve como referência o `Manual Portal Padrão do Governo <http://www.secom.gov.br/orientacoes-gerais/comunicacao-digital/gestao-manual-portal-modelo-governo-federal-dez2014.pdf/view>`_.
+* Este tutorial teve como referência o `Manual de Instalação do Plone usando Portal Padrão do Governo <http://identidade-digital-de-governo-plone.readthedocs.io/en/latest/>`_.
 
 * Apresenta passo a passo da instalação do Plone utilizando como tema portal padrão do governo.
 
