@@ -6,9 +6,9 @@ Author
 	Versão: 0.0.1
 
 
-Mais informações
-----------------
-	
-	`Linkedin <https://www.linkedin.com/in/fabianarroliveira/>`_
-	
-	`Github <https://github.com/faahbih/>`_
+.. topic:: Social Networks
+
+    
+    `Linkedin <https://www.linkedin.com/in/fabianarroliveira/>`_
+
+    `Github <https://github.com/faahbih/>`_
