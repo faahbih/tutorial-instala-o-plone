@@ -16,4 +16,4 @@ Author
 .. topic:: Contato
 
 	
-	email: fabiana.rr.oliveira@gmail.com | telefone: (12) 98841-1448
+	email: fabiana.rr.oliveira@gmail.com
